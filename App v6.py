@@ -1,5 +1,4 @@
 import streamlit as st
-from PIL import Image
 
 # Configuração da página
 st.set_page_config(page_title="Mark da Marketri - Quiz de Marketing", page_icon="📊", layout="wide")
@@ -8,7 +7,7 @@ st.set_page_config(page_title="Mark da Marketri - Quiz de Marketing", page_icon=
 COR_ROXO = "#8c52ff"
 COR_AZUL = "#5ce1e6"
 
-# CSS com fundo degradê e botões estilizados
+# CSS com fundo degradê e estilo dos botões
 st.markdown(f"""
     <style>
         html, body, .stApp {{
@@ -21,6 +20,7 @@ st.markdown(f"""
             font-weight: bold;
             border-radius: 6px;
             padding: 0.5em 1em;
+            font-size: 16px;
         }}
         .stRadio > div {{
             padding: 10px 0;
@@ -28,11 +28,11 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# Colunas para layout com Mark na esquerda
+# Layout com Mark e introdução
 g_col, q_col = st.columns([1, 2])
 
 with g_col:
-    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark_fundo_transparente.png", width=250)
+    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark%20Transparente.png", width=250)
 
 with q_col:
     st.markdown("""
@@ -41,7 +41,7 @@ with q_col:
         É rapidinho! Responda as próximas perguntas e no final te conto o resultado. Vamos nessa? 🚀</p>
     """, unsafe_allow_html=True)
 
-# Perguntas e alternativas
+# Perguntas
 perguntas = [
     {
         "pergunta": "Você tem um plano de Marketing claro para os próximos meses?",
@@ -85,7 +85,7 @@ perguntas = [
     },
 ]
 
-# Estado do quiz
+# Estado
 if "indice" not in st.session_state:
     st.session_state.indice = 0
     st.session_state.pontuacao = 0
@@ -97,26 +97,26 @@ indice = st.session_state.indice
 if not st.session_state.concluido and indice < len(perguntas):
     pergunta_atual = perguntas[indice]
     st.markdown("---")
-
     with st.form(key=f"form_{indice}"):
         st.subheader(f"{indice+1}. {pergunta_atual['pergunta']}")
         opcoes = [a[0] for a in pergunta_atual["alternativas"]]
         escolha = st.radio("Escolha uma opção:", opcoes, key=f"q_{indice}")
-        submitted = st.form_submit_button("Próxima pergunta")
+        enviar = st.form_submit_button("Próxima pergunta")
 
-        if submitted and escolha:
-            valor = dict(pergunta_atual["alternativas"])[escolha]
-            if st.session_state.respostas[indice] is None:
-                st.session_state.pontuacao += valor
-                st.session_state.respostas[indice] = escolha
-            elif st.session_state.respostas[indice] != escolha:
-                valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
-                st.session_state.pontuacao -= valor_antigo
-                st.session_state.pontuacao += valor
-                st.session_state.respostas[indice] = escolha
-            st.session_state.indice += 1
-            if st.session_state.indice == len(perguntas):
-                st.session_state.concluido = True
+        if enviar:
+            if escolha:
+                valor = dict(pergunta_atual["alternativas"])[escolha]
+                if st.session_state.respostas[indice] is None:
+                    st.session_state.pontuacao += valor
+                    st.session_state.respostas[indice] = escolha
+                elif st.session_state.respostas[indice] != escolha:
+                    valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
+                    st.session_state.pontuacao -= valor_antigo
+                    st.session_state.pontuacao += valor
+                    st.session_state.respostas[indice] = escolha
+                st.session_state.indice += 1
+                if st.session_state.indice == len(perguntas):
+                    st.session_state.concluido = True
 
 # Resultado final
 if st.session_state.concluido:
@@ -135,9 +135,9 @@ if st.session_state.concluido:
     st.markdown("""
         <div style='text-align: center;'>
             <h4 style='color: white;'>📲 Quer melhorar o marketing da sua empresa?<br>
-            Fale com a equipe da <strong>Marketri</strong> e descubra como podemos te ajudar de forma estratégica!</h4>
+            Fale com a equipe da <strong>Marketri</strong> agora mesmo!</h4>
             <a href='https://wa.me/message/OIPGWY5OX4AEJ1' target='_blank'>
-                <button style='background-color:#5ce1e6; color:black; font-weight:bold; padding:10px 20px; border:none; border-radius:5px; font-size:16px;'>Falar com a Marketri no WhatsApp</button>
+                <button style='background-color:#5ce1e6; color:black; font-weight:bold; padding:10px 20px; border:none; border-radius:5px; font-size:16px;'>Conversar pelo WhatsApp</button>
             </a>
         </div>
     """, unsafe_allow_html=True)
