@@ -34,7 +34,7 @@ st.markdown(f"""
 g_col, q_col = st.columns([1, 2])
 
 with g_col:
-    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark%20da%20Marketri.png", width=250)
+    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark_transparente.png", width=250)
 
 with q_col:
     st.markdown("""
@@ -99,30 +99,27 @@ indice = st.session_state.indice
 if not st.session_state.concluido and indice < len(perguntas):
     pergunta_atual = perguntas[indice]
     st.markdown("---")
-    st.subheader(f"{indice+1}. {pergunta_atual['pergunta']}")
-    opcoes = [a[0] for a in pergunta_atual["alternativas"]]
-    escolha = st.radio("Escolha uma opção:", opcoes, key=f"q_{indice}")
 
-    if st.button("Próxima pergunta"):
-        if escolha:
-            valor = dict(pergunta_atual["alternativas"])[escolha]
-            if st.session_state.respostas[indice] is None:
-                st.session_state.pontuacao += valor
-                st.session_state.respostas[indice] = escolha
-                st.session_state.indice += 1
-            elif st.session_state.respostas[indice] != escolha:
-                valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
-                st.session_state.pontuacao -= valor_antigo
-                st.session_state.pontuacao += valor
-                st.session_state.respostas[indice] = escolha
-                st.session_state.indice += 1
-            else:
-                st.session_state.indice += 1
+    with st.form(key=f"form_{indice}"):
+        st.subheader(f"{indice+1}. {pergunta_atual['pergunta']}")
+        opcoes = [a[0] for a in pergunta_atual["alternativas"]]
+        escolha = st.radio("Escolha uma opção:", opcoes, key=f"q_{indice}")
+        submitted = st.form_submit_button("Próxima pergunta")
 
-            if st.session_state.indice == len(perguntas):
-                st.session_state.concluido = True
-        else:
-            st.warning("Por favor, selecione uma opção.")
+        if submitted:
+            if escolha:
+                valor = dict(pergunta_atual["alternativas"])[escolha]
+                if st.session_state.respostas[indice] is None:
+                    st.session_state.pontuacao += valor
+                    st.session_state.respostas[indice] = escolha
+                elif st.session_state.respostas[indice] != escolha:
+                    valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
+                    st.session_state.pontuacao -= valor_antigo
+                    st.session_state.pontuacao += valor
+                    st.session_state.respostas[indice] = escolha
+                st.session_state.indice += 1
+                if st.session_state.indice == len(perguntas):
+                    st.session_state.concluido = True
 
 # Resultado final
 if st.session_state.concluido:
