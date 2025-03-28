@@ -1,7 +1,7 @@
 import streamlit as st
-import qrcode
 from PIL import Image
 import io
+import qrcode
 
 # Configuração da página
 st.set_page_config(page_title="Mark da Marketri - Quiz de Marketing", page_icon="📊", layout="wide")
@@ -148,4 +148,5 @@ if st.session_state.concluido:
     qr = qrcode.make(link_whatsapp)
     buf = io.BytesIO()
     qr.save(buf)
+    buf.seek(0)
     st.image(Image.open(buf), caption="Acesse pelo QR Code", width=200)
