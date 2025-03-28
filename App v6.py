@@ -1,7 +1,5 @@
 import streamlit as st
 from PIL import Image
-import io
-import qrcode
 
 # Configuração da página
 st.set_page_config(page_title="Mark da Marketri - Quiz de Marketing", page_icon="📊", layout="wide")
@@ -19,7 +17,7 @@ st.markdown(f"""
         }}
         .stButton > button {{
             background-color: {COR_AZUL};
-            color: white;
+            color: black;
             font-weight: bold;
             border-radius: 6px;
             padding: 0.5em 1em;
@@ -34,7 +32,7 @@ st.markdown(f"""
 g_col, q_col = st.columns([1, 2])
 
 with g_col:
-    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark_transparente.png", width=250)
+    st.image("https://raw.githubusercontent.com/RPAlbuquerque/Data/main/Mark_fundo_transparente.png", width=250)
 
 with q_col:
     st.markdown("""
@@ -106,20 +104,19 @@ if not st.session_state.concluido and indice < len(perguntas):
         escolha = st.radio("Escolha uma opção:", opcoes, key=f"q_{indice}")
         submitted = st.form_submit_button("Próxima pergunta")
 
-        if submitted:
-            if escolha:
-                valor = dict(pergunta_atual["alternativas"])[escolha]
-                if st.session_state.respostas[indice] is None:
-                    st.session_state.pontuacao += valor
-                    st.session_state.respostas[indice] = escolha
-                elif st.session_state.respostas[indice] != escolha:
-                    valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
-                    st.session_state.pontuacao -= valor_antigo
-                    st.session_state.pontuacao += valor
-                    st.session_state.respostas[indice] = escolha
-                st.session_state.indice += 1
-                if st.session_state.indice == len(perguntas):
-                    st.session_state.concluido = True
+        if submitted and escolha:
+            valor = dict(pergunta_atual["alternativas"])[escolha]
+            if st.session_state.respostas[indice] is None:
+                st.session_state.pontuacao += valor
+                st.session_state.respostas[indice] = escolha
+            elif st.session_state.respostas[indice] != escolha:
+                valor_antigo = dict(pergunta_atual["alternativas"])[st.session_state.respostas[indice]]
+                st.session_state.pontuacao -= valor_antigo
+                st.session_state.pontuacao += valor
+                st.session_state.respostas[indice] = escolha
+            st.session_state.indice += 1
+            if st.session_state.indice == len(perguntas):
+                st.session_state.concluido = True
 
 # Resultado final
 if st.session_state.concluido:
@@ -136,14 +133,11 @@ if st.session_state.concluido:
 
     st.markdown("---")
     st.markdown("""
-        <h4 style='text-align: center; color: white;'>📲 Quer melhorar o marketing da sua empresa?<br>
-        Fale com a equipe da <strong>Marketri</strong> no WhatsApp e descubra como podemos te ajudar a crescer de forma estratégica.</h4>
+        <div style='text-align: center;'>
+            <h4 style='color: white;'>📲 Quer melhorar o marketing da sua empresa?<br>
+            Fale com a equipe da <strong>Marketri</strong> e descubra como podemos te ajudar de forma estratégica!</h4>
+            <a href='https://wa.me/message/OIPGWY5OX4AEJ1' target='_blank'>
+                <button style='background-color:#5ce1e6; color:black; font-weight:bold; padding:10px 20px; border:none; border-radius:5px; font-size:16px;'>Falar com a Marketri no WhatsApp</button>
+            </a>
+        </div>
     """, unsafe_allow_html=True)
-
-    # Gerar QR Code com link do WhatsApp (placeholder)
-    link_whatsapp = "https://wa.me/5599999999999"
-    qr = qrcode.make(link_whatsapp)
-    buf = io.BytesIO()
-    qr.save(buf)
-    buf.seek(0)
-    st.image(Image.open(buf), caption="Acesse pelo QR Code", width=200)
